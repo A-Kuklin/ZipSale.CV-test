@@ -33,7 +33,7 @@ Stack: Python 3.9 и Django.
 Создание и применение миграций:<br>
 ```$ python manage.py makemigrations``` и ```$ python manage.py migrate```
 
-Создание и запись токена в .env файле
+Создание и запись токена в .env файле:<br>
 ```Ссылка: https://github.com/settings/tokens```
 
 Запускаем django сервер:<br>
