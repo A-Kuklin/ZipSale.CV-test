@@ -16,3 +16,25 @@
 Stack: Python 3.9 и Django.
 
 Время: 8-10 часов.
+
+<br>
+## Локальное развёртывание
+Клонируем репозиторий на локальную машину:<br>
+```$ git clone https://github.com/A-Kuklin/yatube.git```
+
+Создаем виртуальное окружение:<br>
+ ```$ python -m venv venv```
+
+Запускаем виртуальное окружение<br>
+
+Устанавливаем зависимости:<br>
+```$ pip install -r requirements.txt```
+
+Создание и применение миграций:<br>
+```$ python manage.py makemigrations``` и ```$ python manage.py migrate```
+
+Создание и запись токена в .env файле
+```Ссылка: https://github.com/settings/tokens```
+
+Запускаем django сервер:<br>
+```$ python manage.py runserver```
