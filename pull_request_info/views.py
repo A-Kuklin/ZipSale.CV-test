@@ -24,55 +24,57 @@ def index(request):
 
 
 def collect_data(username):
+    logger.debug('logging is started')
     token = os.getenv('GitHub_Token')
     client = GithubClient(token, username)
     repos = client.get_repos()
     data = []
-    logger.debug('logging is started')
-    if not isinstance(repos, list):
+    if isinstance(repos, list):
+        for repository in repos:
+            if client.fork_approval(repository['name']):
+                response = client.fork_owner(repository.get('name'))
+                rep_data = {
+                    'github_login': repository['owner']['login'],
+                    'github_login_url': repository['owner']['html_url'],
+                    'name': repository['name'],
+                    'link': response['html_url'],
+                    'stars': response['stargazers_count']
+                }
+
+                pull_requests = client.get_merged_pr(
+                    repository['name'], response['owner']['login']
+                )
+                rep_data['merged_pull_requests'] = [
+                    {
+                        'number': item['number'],
+                        'url': item['html_url'],
+                        'num_of_comments': item['comments']
+                    } for item in list(filter(
+                        lambda n: n['user']['login'] == username, pull_requests
+                    ))
+                ]
+
+                pull_requests = client.get_unmerged_pr(
+                    repository['name'], response['owner']['login']
+                )
+                rep_data['unmerged_pull_requests'] = [
+                    {
+                        'number': item['number'],
+                        'url': item['html_url'],
+                        'num_of_comments': item['comments']
+                    } for item in list(filter(
+                        lambda n: n['user']['login'] == username, pull_requests
+                    ))
+                ]
+
+                data.append(rep_data)
+    elif repos['message'] == 'Not Found':
+        raise Exception('Login not found')
+    else:
         reset_time = client.get_rate_limit_reset_time()
         raise Exception(
             f'API rate limit reached. {reset_time} hours until next request'
         )
-
-    for repository in repos:
-        if client.fork_approval(repository['name']):
-            response = client.fork_owner(repository.get('name'))
-            rep_data = {
-                'github_login': repository['owner']['login'],
-                'github_login_url': repository['owner']['html_url'],
-                'name': repository['name'],
-                'link': response['html_url'],
-                'stars': response['stargazers_count']
-            }
-
-            pull_requests = client.get_merged_pr(
-                repository['name'], response['owner']['login']
-            )
-            rep_data['merged_pull_requests'] = [
-                {
-                    'number': item['number'],
-                    'url': item['html_url'],
-                    'num_of_comments': item['comments']
-                } for item in list(filter(
-                    lambda n: n['user']['login'] == username, pull_requests
-                ))
-            ]
-
-            pull_requests = client.get_unmerged_pr(
-                repository['name'], response['owner']['login']
-            )
-            rep_data['unmerged_pull_requests'] = [
-                {
-                    'number': item['number'],
-                    'url': item['html_url'],
-                    'num_of_comments': item['comments']
-                } for item in list(filter(
-                    lambda n: n['user']['login'] == username, pull_requests
-                ))
-            ]
-
-            data.append(rep_data)
     logger.debug(data)
     return data
 
