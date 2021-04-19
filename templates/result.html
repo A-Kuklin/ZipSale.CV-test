@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">GitHub username</th>
+                <th scope="col">Repository name</th>
+                <th scope="col">Parent link</th>
+                <th scope="col">Stars</th>
+                <th scope="col">Merged pull requests</th>
+                <th scope="col">Unmerged pull requests</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for repo in data %}
+                <tr>
+                    <td><a href="{{ repo.github_login_url }}">{{ repo.github_login }}</a></td>
+                    <td>{{ repo.name }}</td>
+                    <td><a href="{{ repo.link }}">{{ repo.link }}</a></td>
+                    <td>{{ repo.stars }}</td>
+                    <td>
+                        {% for pr in repo.merged_pull_requests %}
+                            № {{ pr.number }} - <a href="{{ pr.url }}">link</a> - comments: {{ pr.num_of_comments }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% for pr in repo.unmerged_pull_requests %}
+                            № {{ pr.number }} - <a href="{{ pr.url }}">link</a> - comments: {{ pr.num_of_comments }}<br>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
