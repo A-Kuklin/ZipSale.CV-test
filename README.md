@@ -15,9 +15,8 @@
 
 Stack: Python 3.9 и Django.
 
-Время: 8-10 часов.
+Время: 8-10 часов.</br>
 
-<br>
 ## Локальное развёртывание
 Клонируем репозиторий на локальную машину:<br>
 ```$ git clone https://github.com/A-Kuklin/yatube.git```
